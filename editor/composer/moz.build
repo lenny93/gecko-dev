@@ -10,6 +10,7 @@ MOCHITEST_CHROME_MANIFESTS += ['test/chrome.ini']
 
 XPIDL_SOURCES += [
     'nsIEditingSession.idl',
+    'nsIEditorGrammarCheck.idl',
 ]
 
 XPIDL_MODULE = 'composer'
