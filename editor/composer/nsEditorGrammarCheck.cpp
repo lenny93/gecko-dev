@@ -4,7 +4,7 @@
 #include "mozilla/ModuleUtils.h"
 #include <string.h>                     // for nullptr, strcmp
 #include <windows.h>
-
+#include <iostream>
 
 using namespace mozilla;
 
@@ -13,7 +13,7 @@ NS_IMPL_CLASSINFO(nsEditorGrammarCheck, nullptr, 0, NS_GRAMMARCHECK_CID)
 NS_IMPL_ISUPPORTS_CI(nsEditorGrammarCheck, nsIEditorGrammarCheck)
 
 
-nsEditorGrammarCheck::nsEditorGrammarCheck() 
+nsEditorGrammarCheck::nsEditorGrammarCheck() : gCallback(nullptr)
 {
 	NS_ASSERTION(!gGrammarCheckService,
 			   "Attempting to create two instances of the service!");
@@ -36,9 +36,16 @@ nsresult nsEditorGrammarCheck::Init()
 
 NS_IMETHODIMP nsEditorGrammarCheck::Poke(const char* aValue)
 {
-	MessageBox(0, "Hello", "Meow", 2);
+	std::cout << "Calling from addon: " << aValue << std::endl;
     return NS_OK;
 }
+
+NS_IMETHODIMP nsEditorGrammarCheck::RegisterAddon(nsIEditorGrammarCheckCallback* callback)
+{
+	gCallback = callback;
+    return NS_OK;
+}
+
 
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(nsEditorGrammarCheck, nsEditorGrammarCheck::GetSingleton)

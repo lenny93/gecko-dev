@@ -5,9 +5,18 @@
 
 #include "nsISupports.idl"
 
+interface nsIEditorGrammarCheckCallback;
+
 
 [scriptable, uuid(8ac26150-586f-4b70-90df-07610b80b45f)]
 interface nsIEditorGrammarCheck : nsISupports
 {
     void poke(in string aValue);
+	void registerAddon(in nsIEditorGrammarCheckCallback callback);
+};
+
+[scriptable, function, uuid(a234f68f-425c-4f48-ba8b-abf49621e24a)]
+interface nsIEditorGrammarCheckCallback : nsISupports
+{
+  void doGrammarCheck();
 };

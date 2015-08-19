@@ -74,6 +74,7 @@ public:
 private:
 	~nsEditorGrammarCheck();
 	static nsEditorGrammarCheck* gGrammarCheckService;
+	nsIEditorGrammarCheckCallback* gCallback;
 };
 
 #endif
