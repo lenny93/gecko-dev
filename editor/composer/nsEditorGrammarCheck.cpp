@@ -46,6 +46,14 @@ NS_IMETHODIMP nsEditorGrammarCheck::RegisterAddon(nsIEditorGrammarCheckCallback*
     return NS_OK;
 }
 
+NS_IMETHODIMP nsEditorGrammarCheck::ErrorsFound(uint32_t count, uint32_t* errors)
+{
+	for (int i = 0; i < count; i++)
+        std::cout << "Error number " << errors[i] << std::endl; 
+	
+    return NS_OK;
+}
+
 
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(nsEditorGrammarCheck, nsEditorGrammarCheck::GetSingleton)
