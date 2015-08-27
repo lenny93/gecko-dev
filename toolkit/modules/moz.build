@@ -32,6 +32,7 @@ EXTRA_JS_MODULES += [
     'Geometry.jsm',
     'GMPInstallManager.jsm',
     'GMPUtils.jsm',
+    'GrammarCheck.jsm',
     'Http.jsm',
     'InlineSpellChecker.jsm',
     'InlineSpellCheckerContent.jsm',
