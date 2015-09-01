@@ -3,6 +3,8 @@
 
 #include "nsIEditorGrammarCheck.h"
 
+class nsEditor;
+
 #define NS_GRAMMARCHECK_CONTRACTID "@mozilla.org/grammarcheck;1"
 #define NS_GRAMMARCHECK_CLASSNAME "nsEditorGrammarCheck"
 #define NS_GRAMMARCHECK_CID { 0x8ac26150, 0x586f, 0x4b70, \
@@ -49,6 +51,8 @@ public:
 	
 	nsresult Init();
 
+	void SetCurrentEditor(nsEditor* editor);
+
     /**
      * This macro expands into a declaration of the nsISupports interface.
      * Every XPCOM component needs to implement nsISupports, as it acts
@@ -75,6 +79,8 @@ private:
 	~nsEditorGrammarCheck();
 	static nsEditorGrammarCheck* gGrammarCheckService;
 	nsIEditorGrammarCheckCallback* gCallback;
+
+	nsEditor* mEditor;
 };
 
 #endif

@@ -106,6 +106,7 @@
 #include "nsThreadUtils.h"              // for nsRunnable
 #include "nsTransactionManager.h"       // for nsTransactionManager
 #include "prtime.h"                     // for PR_Now
+//#include "..\composer\nsEditorGrammarCheck.h"
 
 class nsIOutputStream;
 class nsIParserService;
@@ -259,6 +260,7 @@ nsEditor::Init(nsIDOMDocument *aDoc, nsIContent *aRoot,
   /* Show the caret */
   selCon->SetCaretReadOnly(false);
   selCon->SetDisplaySelection(nsISelectionController::SELECTION_ON);
+
 
   selCon->SetSelectionFlags(nsISelectionDisplay::DISPLAY_ALL);//we want to see all the selection reflected to user
 
@@ -5156,6 +5158,9 @@ void
 nsEditor::OnFocus(nsIDOMEventTarget* aFocusEventTarget)
 {
   InitializeSelection(aFocusEventTarget);
+
+  //nsEditorGrammarCheck::GetGrammarCheckService()->SetCurrentEditor(this);
+
   if (mInlineSpellChecker) {
     mInlineSpellChecker->UpdateCurrentDictionary();
   }
