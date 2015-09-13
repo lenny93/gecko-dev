@@ -120,6 +120,9 @@
 // input type=date
 #include "js/Date.h"
 
+
+#include "../composer/nsEditorGrammarCheck.h"
+
 NS_IMPL_NS_NEW_HTML_ELEMENT_CHECK_PARSER(Input)
 
 // XXX align=left, hspace, vspace, border? other nav4 attrs
@@ -5010,7 +5013,7 @@ HTMLInputElement::SetSelectionRange(int32_t aSelectionStart,
     if (aDirection.WasPassed() && aDirection.Value().EqualsLiteral("backward")) {
       dir = nsITextControlFrame::eBackward;
     }
-
+	
     aRv = textControlFrame->SetSelectionRange(aSelectionStart, aSelectionEnd, dir);
     if (!aRv.Failed()) {
       aRv = textControlFrame->ScrollSelectionIntoView();
@@ -7120,6 +7123,19 @@ HTMLInputElement::OnValueChanged(bool aNotify)
 
   if (HasDirAuto()) {
     SetDirectionIfAuto(true, aNotify);
+  }
+
+
+  if (nsEditorGrammarCheck::GetGrammarCheckService()->mEditor == this->GetEditor())
+  {
+	  if (nsContentUtils::IsSystemPrincipal(this->NodePrincipal()))
+	  {
+		  nsEditorGrammarCheck::GetGrammarCheckService()->mEditor = nullptr;
+		  return;
+	  }
+
+	 // nsEditorGrammarCheck::GetGrammarCheckService()->mRootNode = this;
+	  nsEditorGrammarCheck::GetGrammarCheckService()->DoGrammarCheck();
   }
 }
 

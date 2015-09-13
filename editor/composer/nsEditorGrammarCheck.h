@@ -1,9 +1,17 @@
-#ifndef __SPECIALTHING_IMPL_H__
-#define __SPECIALTHING_IMPL_H__
+#ifndef __GRAMMARCHECK_IMPL_H__
+#define __GRAMMARCHECK_IMPL_H__
 
+#include "nsCOMPtr.h"                   // for nsCOMPtr
+#include "nsCycleCollectionParticipant.h"
 #include "nsIEditorGrammarCheck.h"
+#include "nsISupportsImpl.h"
+#include "nsString.h"                   // for nsString
+#include "nsTArray.h"                   // for nsTArray
+#include "nscore.h"    
+#include "../../extensions/spellcheck/src/mozInlineSpellWordUtil.h"
 
-class nsEditor;
+class nsIEditor;
+//class mozInlineSpellWordUtil;
 
 #define NS_GRAMMARCHECK_CONTRACTID "@mozilla.org/grammarcheck;1"
 #define NS_GRAMMARCHECK_CLASSNAME "nsEditorGrammarCheck"
@@ -35,6 +43,13 @@ class nsEditorGrammarCheck final : public nsIEditorGrammarCheck
 {
 public:
 	nsEditorGrammarCheck();
+
+	struct GRAMMARERROR
+	{
+		int errorStart;
+		int errorEnd;
+		nsString suggestion;
+	};
 	
 	static already_AddRefed<nsEditorGrammarCheck> GetSingleton();
 	
@@ -49,9 +64,11 @@ public:
 		return gGrammarCheckService;
 	}
 	
-	nsresult Init();
+	NS_IMETHODIMP Init();
 
-	void SetCurrentEditor(nsEditor* editor);
+	void SetCurrentEditor(nsIEditor* editor);
+
+	NS_IMETHODIMP DoGrammarCheck();
 
     /**
      * This macro expands into a declaration of the nsISupports interface.
@@ -73,14 +90,20 @@ public:
      * The methods of nsISample are discussed individually below, but
      * commented out (because this macro already defines them.)
      */
-    NS_DECL_NSIEDITORGRAMMARCHECK
+	 NS_DECL_NSIEDITORGRAMMARCHECK
+
+
+	nsCOMPtr<nsIEditor> mEditor;
+	nsCOMPtr<nsIDOMNode> mRootNode;
+	bool mCheckEnabled;
 	
 private:
 	~nsEditorGrammarCheck();
 	static nsEditorGrammarCheck* gGrammarCheckService;
-	nsIEditorGrammarCheckCallback* gCallback;
+	nsCOMPtr<nsIEditorGrammarCheckCallback> gCallback;
 
-	nsEditor* mEditor;
+	mozInlineSpellWordUtil util;
+	std::vector<GRAMMARERROR> suggestions;
 };
 
 #endif

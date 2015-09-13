@@ -20,7 +20,9 @@
 <!ENTITY spellUndoAddToDictionary.label "Undo Add To Dictionary">
 <!ENTITY spellUndoAddToDictionary.accesskey "n">
 <!ENTITY spellCheckToggle.label "Check Spelling">
-<!ENTITY spellCheckToggle.accesskey "g">
+<!ENTITY spellCheckToggle.accesskey "s">
+<!ENTITY grammarCheckToggle.label "Check Grammar">
+<!ENTITY grammarCheckToggle.accesskey "g">
 <!ENTITY spellNoSuggestions.label "(No Spelling Suggestions)">
 <!ENTITY spellDictionaries.label "Languages">
 <!ENTITY spellDictionaries.accesskey "l">

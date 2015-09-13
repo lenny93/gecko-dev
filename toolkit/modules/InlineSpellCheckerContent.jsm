@@ -104,9 +104,7 @@ var InlineSpellCheckerContent = {
       "InlineSpellChecker:selectDictionary",
       "InlineSpellChecker:replaceMisspelling",
       "InlineSpellChecker:toggleEnabled",
-
       "InlineSpellChecker:recheck",
-
       "InlineSpellChecker:uninit"
     ],
 

@@ -140,7 +140,10 @@ nsLookAndFeel::NativeGetColor(ColorID aID, nscolor &aColor)
         return NS_OK;
     case eColorID_SpellCheckerUnderline:
         aColor = NS_RGB(0xff, 0, 0);
-        return NS_OK;
+		return NS_OK;
+	case eColorID_GrammarCheckerUnderline:
+		aColor = NS_RGB(0, 100, 0);
+		return NS_OK;
 
     // New CSS 2 Color definitions
     case eColorID_activeborder:

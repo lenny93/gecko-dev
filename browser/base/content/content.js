@@ -14,7 +14,6 @@ Cu.import("resource:///modules/ContentWebRTC.jsm");
 Cu.import("resource:///modules/ContentObservers.jsm");
 Cu.import("resource://gre/modules/InlineSpellChecker.jsm");
 Cu.import("resource://gre/modules/InlineSpellCheckerContent.jsm");
-//Cu.import("resource://gre/modules/GrammarCheck.jsm");
 
 XPCOMUtils.defineLazyModuleGetter(this, "BrowserUtils",
   "resource://gre/modules/BrowserUtils.jsm");
@@ -151,7 +150,6 @@ let handleContentContextMenu = function (event) {
         (SpellCheckHelper.EDITABLE | SpellCheckHelper.CONTENTEDITABLE)) {
       spellInfo =
         InlineSpellCheckerContent.initContextMenu(event, editFlags, this);
-		//GrammarCheckContent.initContextMenu(event, editFlags, this);
     }
 
     // Set the event target first as the copy image command needs it to

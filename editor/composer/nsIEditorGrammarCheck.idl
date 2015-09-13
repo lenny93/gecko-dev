@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "nsISupports.idl"
+#include "nsIEditor.idl"
 
 interface nsIEditorGrammarCheckCallback;
 
@@ -11,13 +12,17 @@ interface nsIEditorGrammarCheckCallback;
 [scriptable, uuid(8ac26150-586f-4b70-90df-07610b80b45f)]
 interface nsIEditorGrammarCheck : nsISupports
 {
-    void poke(in string aValue);
 	void registerAddon(in nsIEditorGrammarCheckCallback callback);
-	void errorsFound(in unsigned long count, [array, size_is (count)] in unsigned long errors);
+	void errorsFound([array, size_is (count)] in uint32_t errorsStart, [array, size_is (count)] in uint32_t errorsEnd, in uint32_t count);
+	void addSuggestionForError(in uint32_t error, in AString suggestion);
+	AString getSuggestionForOffset(in nsIEditor editor, in uint32_t aOffset);
+	void doGrammarCorrection(in uint32_t aOffset);
+	void toggleEnabled();
+	boolean isGrammarCheckEnabled();
 };
 
 [scriptable, function, uuid(a234f68f-425c-4f48-ba8b-abf49621e24a)]
 interface nsIEditorGrammarCheckCallback : nsISupports
 {
-  void doGrammarCheck(in string text);
+	void doGrammarCheck(in AString text);
 };

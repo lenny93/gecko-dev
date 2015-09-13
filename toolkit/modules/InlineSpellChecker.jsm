@@ -167,6 +167,8 @@ InlineSpellChecker.prototype = {
       item.setAttribute("class", "spell-suggestion");
       menu.insertBefore(item, insertBefore);
     }
+	
+	
     return this.mSpellSuggestions.length;
   },
 

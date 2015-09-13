@@ -161,6 +161,8 @@ private:
   // Convenience functions, object must be initialized
   nsresult MakeRange(NodeOffset aBegin, NodeOffset aEnd, nsRange** aRange);
   nsresult MakeRangeForWord(const RealWord& aWord, nsRange** aRange);
+
+  friend class nsEditorGrammarCheck;
 };
 
 #endif

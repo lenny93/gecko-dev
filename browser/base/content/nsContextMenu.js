@@ -15,6 +15,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "Pocket",
   "resource:///modules/Pocket.jsm");
 
 var gContextMenuContentData = null;
+var gcSvc = Components.classes["@mozilla.org/grammarcheck;1"].getService(Components.interfaces.nsIEditorGrammarCheck);
+var rangeOffset;
 
 function nsContextMenu(aXulMenu, aIsShift) {
   this.shouldDisplay = true;
@@ -355,15 +357,19 @@ nsContextMenu.prototype = {
   },
 
   initSpellingItems: function() {
+	
     var canSpell = InlineSpellCheckerUI.canSpellCheck &&
                    !InlineSpellCheckerUI.initialSpellCheckPending &&
                    this.canSpellCheck;
     var onMisspelling = InlineSpellCheckerUI.overMisspelling;
     var showUndo = canSpell && InlineSpellCheckerUI.canUndo();
-    this.showItem("spell-check-enabled", canSpell);
+	
+    this.showItem("spell-check-enabled", true);
+    this.showItem("grammar-check-enabled", true);
     this.showItem("spell-separator", canSpell || this.onEditableArea);
     document.getElementById("spell-check-enabled")
             .setAttribute("checked", canSpell && InlineSpellCheckerUI.enabled);
+    document.getElementById("grammar-check-enabled").setAttribute("checked", gcSvc.isGrammarCheckEnabled());
 
     this.showItem("spell-add-to-dictionary", onMisspelling);
     this.showItem("spell-undo-add-to-dictionary", showUndo);
@@ -398,6 +404,15 @@ nsContextMenu.prototype = {
     }
     else
       this.showItem("spell-add-dictionaries-main", false);
+  },
+  
+  grammarCheckToggle: function() {
+	gcSvc.toggleEnabled();
+  },
+  
+  doGrammarCorrection: function()
+  {
+	gcSvc.doGrammarCorrection(this.mWordOffset);
   },
 
   initClipboardItems: function() {
@@ -676,6 +691,7 @@ nsContextMenu.prototype = {
           else {
             InlineSpellCheckerUI.init(this.target.QueryInterface(Ci.nsIDOMNSEditableElement).editor);
             InlineSpellCheckerUI.initFromEvent(aRangeParent, aRangeOffset);
+			this.initGrammarItems(this.target.QueryInterface(Ci.nsIDOMNSEditableElement).editor, aRangeParent, aRangeOffset);
           }
         }
         this.onKeywordField = (editFlags & SpellCheckHelper.KEYWORD);
@@ -816,12 +832,37 @@ nsContextMenu.prototype = {
                                         .getInterface(Ci.nsIEditingSession);
           InlineSpellCheckerUI.init(editingSession.getEditorForWindow(targetWin));
           InlineSpellCheckerUI.initFromEvent(aRangeParent, aRangeOffset);
+		  this.initGrammarItems(editingSession.getEditorForWindow(targetWin), aRangeParent, aRangeOffset);
         }
         var canSpell = InlineSpellCheckerUI.canSpellCheck && this.canSpellCheck;
         this.showItem("spell-check-enabled", canSpell);
         this.showItem("spell-separator", canSpell);
       }
     }
+  },
+
+  // Returns the computed style attribute for the given element.
+  initGrammarItems: function(aEditor, rangeParent, rangeOffset) {	
+	var gramSuggestion = gcSvc.getSuggestionForOffset(aEditor, rangeOffset);
+	this.mWordOffset = rangeOffset;
+	
+	if(gramSuggestion != "")
+	{
+		this.showItem("grammar-suggestion", true);
+		this.showItem("grammar-suggestion-separator", true);
+		
+		var suggestionsSeparator = document.getElementById("grammar-suggestion-separator");
+		var suggestionItem = document.getElementById("grammar-suggestion");
+		
+		suggestionItem.setAttribute("label", gramSuggestion);
+		suggestionItem.setAttribute("value", gramSuggestion);
+		suggestionItem.setAttribute("class", "spell-suggestion");
+	}
+	else
+	{
+		this.showItem("grammar-suggestion", false);
+		this.showItem("grammar-suggestion-separator", false);
+	}
   },
 
   // Returns the computed style attribute for the given element.

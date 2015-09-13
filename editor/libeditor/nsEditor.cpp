@@ -106,7 +106,7 @@
 #include "nsThreadUtils.h"              // for nsRunnable
 #include "nsTransactionManager.h"       // for nsTransactionManager
 #include "prtime.h"                     // for PR_Now
-//#include "..\composer\nsEditorGrammarCheck.h"
+#include "../composer/nsEditorGrammarCheck.h"
 
 class nsIOutputStream;
 class nsIParserService;
@@ -1882,6 +1882,7 @@ nsEditor::FireInputEvent()
   //       true after compositionstart and before compositionend.
   nsContentUtils::AddScriptRunner(
     new EditorInputEventDispatcher(this, target, !!GetComposition()));
+
 }
 
 NS_IMETHODIMP
@@ -5159,7 +5160,8 @@ nsEditor::OnFocus(nsIDOMEventTarget* aFocusEventTarget)
 {
   InitializeSelection(aFocusEventTarget);
 
-  //nsEditorGrammarCheck::GetGrammarCheckService()->SetCurrentEditor(this);
+
+  nsEditorGrammarCheck::GetGrammarCheckService()->SetCurrentEditor(this);
 
   if (mInlineSpellChecker) {
     mInlineSpellChecker->UpdateCurrentDictionary();
