@@ -177,6 +177,9 @@ nsLookAndFeel::NativeGetColor(ColorID aID, nscolor& aColor)
     case eColorID_SpellCheckerUnderline:
       aColor = NS_RGB(0xff, 0, 0);
       break;
+    case eColorID_GrammarCheckerUnderline:
+        aColor = NS_RGB(0, 100, 0);
+        return NS_OK;
 
 #if (MOZ_WIDGET_GTK == 2)
         // css2  http://www.w3.org/TR/REC-CSS2/ui.html#system-colors

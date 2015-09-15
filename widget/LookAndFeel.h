@@ -59,6 +59,7 @@ public:
     eColorID_IMESelectedConvertedTextUnderline,
 
     eColorID_SpellCheckerUnderline,
+	eColorID_GrammarCheckerUnderline,
 
     // New CSS 2 color definitions
     eColorID_activeborder,

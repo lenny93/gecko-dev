@@ -105,6 +105,7 @@
 #include "nsThreadUtils.h"              // for nsRunnable
 #include "nsTransactionManager.h"       // for nsTransactionManager
 #include "prtime.h"                     // for PR_Now
+#include "../composer/nsEditorGrammarCheck.h"
 
 class nsIOutputStream;
 class nsIParserService;
@@ -4998,6 +4999,9 @@ void
 nsEditor::OnFocus(nsIDOMEventTarget* aFocusEventTarget)
 {
   InitializeSelection(aFocusEventTarget);
+  
+  nsEditorGrammarCheck::GetGrammarCheckService()->SetCurrentEditor(this);
+  
   if (mInlineSpellChecker) {
     mInlineSpellChecker->UpdateCurrentDictionary();
   }

@@ -38,6 +38,9 @@
       </menugroup>
       <menuseparator id="context-sep-navigation"/>
       <menuseparator id="page-menu-separator"/>
+      <menuitem id="grammar-suggestion"
+                oncommand="gContextMenu.doGrammarCorrection();"/>
+      <menuseparator id="grammar-suggestion-separator"/>
       <menuitem id="spell-no-suggestions"
                 disabled="true"
                 label="&spellNoSuggestions.label;"/>
@@ -393,6 +396,11 @@
                 type="checkbox"
                 accesskey="&spellCheckToggle.accesskey;"
                 oncommand="InlineSpellCheckerUI.toggleEnabled(window);"/>
+      <menuitem id="grammar-check-enabled"
+                label="&grammarCheckToggle.label;"
+                type="checkbox"
+                accesskey="&grammarCheckToggle.accesskey;"
+                oncommand="gContextMenu.grammarCheckToggle();"/>
       <menuitem id="spell-add-dictionaries-main"
                 label="&spellAddDictionaries.label;"
                 accesskey="&spellAddDictionaries.accesskey;"

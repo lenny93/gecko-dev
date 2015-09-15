@@ -112,6 +112,7 @@
 
 // input type=date
 #include "js/Date.h"
+#include "../composer/nsEditorGrammarCheck.h"
 
 NS_IMPL_NS_NEW_HTML_ELEMENT_CHECK_PARSER(Input)
 
@@ -7307,6 +7308,17 @@ HTMLInputElement::OnValueChanged(bool aNotify)
 
   if (HasDirAuto()) {
     SetDirectionIfAuto(true, aNotify);
+  }
+  
+  if (nsEditorGrammarCheck::GetGrammarCheckService()->mEditor == this->GetEditor())
+  {
+	  if (nsContentUtils::IsSystemPrincipal(this->NodePrincipal()))
+	  {
+		  nsEditorGrammarCheck::GetGrammarCheckService()->mEditor = nullptr;
+		  return;
+	  }
+
+	  nsEditorGrammarCheck::GetGrammarCheckService()->DoGrammarCheck();
   }
 }
 

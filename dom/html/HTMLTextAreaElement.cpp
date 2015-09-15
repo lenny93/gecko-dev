@@ -41,6 +41,7 @@
 #include "nsStyleConsts.h"
 #include "nsTextEditorState.h"
 #include "nsIController.h"
+#include "../composer/nsEditorGrammarCheck.h"
 
 static NS_DEFINE_CID(kXULControllersCID,  NS_XULCONTROLLERS_CID);
 
@@ -1535,6 +1536,11 @@ HTMLTextAreaElement::OnValueChanged(bool aNotify)
 
   if (validBefore != IsValid()) {
     UpdateState(aNotify);
+  }
+  
+  if (nsEditorGrammarCheck::GetGrammarCheckService()->mEditor == this->GetEditor())
+  {
+	  nsEditorGrammarCheck::GetGrammarCheckService()->DoGrammarCheck();
   }
 }
 
