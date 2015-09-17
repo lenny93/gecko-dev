@@ -16,6 +16,7 @@ XPCOMUtils.defineLazyModuleGetter(this, "Pocket",
 var gContextMenuContentData = null;
 var gcSvc = Components.classes["@mozilla.org/grammarcheck;1"].getService(Components.interfaces.nsIEditorGrammarCheck);
 var rangeOffset;
+var mGrammarSuggestions = [];
 
 function nsContextMenu(aXulMenu, aIsShift) {
   this.shouldDisplay = true;
@@ -478,9 +479,52 @@ nsContextMenu.prototype = {
 	gcSvc.toggleEnabled();
   },
   
-  doGrammarCorrection: function()
+  doGrammarCorrection: function(index)
   {
-	gcSvc.doGrammarCorrection(this.mWordOffset);
+	gcSvc.doGrammarCorrection(this.mWordOffset, index);
+  },
+  
+  initGrammarItems: function(aEditor, rangeParent, rangeOffset) {	
+	var gramSuggestions = gcSvc.getSuggestionsForOffset(aEditor, rangeOffset);
+	var gramDescriptions = gcSvc.getDescriptionsForOffset(aEditor, rangeOffset);
+	this.mWordOffset = rangeOffset;
+	var separator = document.getElementById("grammar-suggestion-separator");
+	var menu = separator.parentNode;
+	
+	var index;
+	for(index = 0; index < mGrammarSuggestions.length; index++)
+	{
+		menu.removeChild(mGrammarSuggestions[index]);
+	}
+	
+	mGrammarSuggestions = [];
+	
+	for(index = 0; index < gramSuggestions.length; index++)
+	{
+		var gs = gramSuggestions.queryElementAt(index, Components.interfaces.nsISupportsString);
+		var gd = gramDescriptions.queryElementAt(index, Components.interfaces.nsISupportsString);
+		var item = menu.ownerDocument.createElement("menuitem");
+		item.setAttribute("label", gs.data);
+		item.setAttribute("value", gs.data);
+		item.setAttribute("tooltip", gd.data);
+		item.setAttribute("tooltiptext", gd.data);
+		item.setAttribute("class", "spell-suggestion");
+		
+		var callback = function(me, val) { return function(evt) { me.doGrammarCorrection(val); } };
+		item.addEventListener("command", callback(this, index), true);
+		
+		menu.insertBefore(item, separator);
+		mGrammarSuggestions.push(item);
+	}
+	
+	if(gramSuggestions.length > 0)
+	{
+		this.showItem("grammar-suggestion-separator", true);
+	}
+	else
+	{
+		this.showItem("grammar-suggestion-separator", false);		
+	}
   },
 
   initClipboardItems: function() {
@@ -888,29 +932,6 @@ nsContextMenu.prototype = {
     }
   },
   
-  initGrammarItems: function(aEditor, rangeParent, rangeOffset) {	
-	var gramSuggestion = gcSvc.getSuggestionForOffset(aEditor, rangeOffset);
-	this.mWordOffset = rangeOffset;
-	
-	if(gramSuggestion != "")
-	{
-		this.showItem("grammar-suggestion", true);
-		this.showItem("grammar-suggestion-separator", true);
-		
-		var suggestionsSeparator = document.getElementById("grammar-suggestion-separator");
-		var suggestionItem = document.getElementById("grammar-suggestion");
-		
-		suggestionItem.setAttribute("label", gramSuggestion);
-		suggestionItem.setAttribute("value", gramSuggestion);
-		suggestionItem.setAttribute("class", "spell-suggestion");
-	}
-	else
-	{
-		this.showItem("grammar-suggestion", false);
-		this.showItem("grammar-suggestion-separator", false);
-	}
-  },
-
   // Returns the computed style attribute for the given element.
   getComputedStyle: function(aElem, aProp) {
     return aElem.ownerDocument

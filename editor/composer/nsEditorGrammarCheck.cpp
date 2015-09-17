@@ -146,7 +146,7 @@ NS_IMETHODIMP nsEditorGrammarCheck::ErrorsFound(uint32_t* errorsStart, uint32_t*
 		ge.errorStart = errorsStart[i];
 		ge.errorEnd = errorsEnd[i];
 
-		suggestions.push_back(ge);
+		mErrors.push_back(ge);
 	}
 
 
@@ -155,47 +155,89 @@ NS_IMETHODIMP nsEditorGrammarCheck::ErrorsFound(uint32_t* errorsStart, uint32_t*
     return NS_OK;
 }
 
-NS_IMETHODIMP nsEditorGrammarCheck::AddSuggestionForError(uint32_t error, const nsAString& suggestion)
+NS_IMETHODIMP nsEditorGrammarCheck::AddSuggestionForError(uint32_t error, const nsAString& suggestion, const nsAString& description)
 {
-	if (suggestions.size() <= (int)error)
+	if (mErrors.size() <= (int)error)
 		return NS_OK;
 
-	suggestions[error].suggestion = suggestion;
+	
+
+	mErrors[error].suggestions.push_back(nsString(suggestion));
+	mErrors[error].descriptions.push_back(nsString(description));
 	
 	return NS_OK;
-
-	nsIDOMNode* aNode;
 }
 
-NS_IMETHODIMP nsEditorGrammarCheck::GetSuggestionForOffset(nsIEditor* editor, uint32_t aOffset, nsAString& _retval)
+NS_IMETHODIMP nsEditorGrammarCheck::GetSuggestionsForOffset(nsIEditor* editor, uint32_t aOffset, nsIArray** _retval)
 {
-	nsString ss;
+	nsresult rv;
+	NS_ENSURE_ARG_POINTER(_retval);
+	*_retval = nullptr;
 
+	nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID);
 
 	if (mEditor == editor && mCheckEnabled)
 	{
-		for (int i = 0; i < suggestions.size(); ++i)
+		for (int i = 0; i < mErrors.size(); ++i)
 		{
-			if (suggestions[i].errorStart <= aOffset && suggestions[i].errorEnd > aOffset)
+			if (mErrors[i].errorStart <= aOffset && mErrors[i].errorEnd > aOffset)
 			{
-				ss = suggestions[i].suggestion;
+				for (int j = 0; j < mErrors[i].suggestions.size(); ++j)
+				{
+					nsCOMPtr<nsISupportsString> istr = do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID);
+					istr->SetData(mErrors[i].suggestions[j]);
+					array->AppendElement(istr, PR_FALSE);
+				}
 				break;
 			}
 		}
 	}
 
-	_retval = ss; // Not found
+
+	array.forget(_retval);
 
 	return NS_OK;
 }
 
-NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCorrection(uint32_t aOffset)
+NS_IMETHODIMP nsEditorGrammarCheck::GetDescriptionsForOffset(nsIEditor* editor, uint32_t aOffset, nsIArray** _retval)
+{
+	nsresult rv;
+	NS_ENSURE_ARG_POINTER(_retval);
+	*_retval = nullptr;
+
+	nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+	NS_ENSURE_SUCCESS(rv, rv);
+
+	if (mEditor == editor && mCheckEnabled)
+	{
+		for (int i = 0; i < mErrors.size(); ++i)
+		{
+			if (mErrors[i].errorStart <= aOffset && mErrors[i].errorEnd > aOffset)
+			{
+				for (int j = 0; j < mErrors[i].descriptions.size(); ++j)
+				{
+					nsCOMPtr<nsISupportsString> istr = do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
+					istr->SetData(mErrors[i].descriptions[j]);
+					array->AppendElement(istr, PR_FALSE);
+				}
+				break;
+			}
+		}
+	}
+
+
+	array.forget(_retval);
+
+	return NS_OK;
+}
+
+NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCorrection(uint32_t aOffset, uint32_t index)
 {
 	if (mEditor && mRootNode)
 	{
-		for (int i = 0; i < suggestions.size(); ++i)
+		for (int i = 0; i < mErrors.size(); ++i)
 		{
-			if (suggestions[i].errorStart <= aOffset && suggestions[i].errorEnd > aOffset)
+			if (mErrors[i].errorStart <= aOffset && mErrors[i].errorEnd > aOffset)
 			{
 				nsCOMPtr<nsISelectionController> selcon;
 				mEditor->GetSelectionController(getter_AddRefs(selcon));
@@ -251,9 +293,9 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCorrection(uint32_t aOffset)
 					mEditor->DeleteSelection(nsIEditor::eNone, nsIEditor::eStrip);
 
 					nsCOMPtr<nsIPlaintextEditor> textEditor(do_QueryInterface(mEditor));
-					if (textEditor)
+					if (textEditor && mErrors[i].suggestions.size() > index)
 					{
-						textEditor->InsertText(suggestions[i].suggestion);
+						textEditor->InsertText(mErrors[i].suggestions[index]);
 					}
 
 					mEditor->EndTransaction();
@@ -364,7 +406,7 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 		return NS_OK;
 
 
-	suggestions.clear();
+	mErrors.clear();
 
 	if (gCallback)
 		gCallback->DoGrammarCheck(os);

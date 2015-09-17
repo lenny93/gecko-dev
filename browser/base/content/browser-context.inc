@@ -38,8 +38,6 @@
       </menugroup>
       <menuseparator id="context-sep-navigation"/>
       <menuseparator id="page-menu-separator"/>
-      <menuitem id="grammar-suggestion"
-                oncommand="gContextMenu.doGrammarCorrection();"/>
       <menuseparator id="grammar-suggestion-separator"/>
       <menuitem id="spell-no-suggestions"
                 disabled="true"

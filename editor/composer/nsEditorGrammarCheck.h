@@ -9,6 +9,9 @@
 #include "nsTArray.h"                   // for nsTArray
 #include "nscore.h"    
 #include "../../extensions/spellcheck/src/mozInlineSpellWordUtil.h"
+#include "nsIArray.h"
+#include "nsIMutableArray.h"
+#include "nsISupportsPrimitives.h"
 
 class nsIEditor;
 //class mozInlineSpellWordUtil;
@@ -48,7 +51,8 @@ public:
 	{
 		int errorStart;
 		int errorEnd;
-		nsString suggestion;
+		std::vector<nsString> suggestions;
+		std::vector<nsString> descriptions;
 	};
 	
 	static already_AddRefed<nsEditorGrammarCheck> GetSingleton();
@@ -102,8 +106,8 @@ private:
 	static nsEditorGrammarCheck* gGrammarCheckService;
 	nsCOMPtr<nsIEditorGrammarCheckCallback> gCallback;
 
-	mozInlineSpellWordUtil util;
-	std::vector<GRAMMARERROR> suggestions;
+	//mozInlineSpellWordUtil util;
+	std::vector<GRAMMARERROR> mErrors;
 };
 
 #endif

@@ -178,7 +178,7 @@ nsLookAndFeel::NativeGetColor(ColorID aID, nscolor& aColor)
       aColor = NS_RGB(0xff, 0, 0);
       break;
     case eColorID_GrammarCheckerUnderline:
-        aColor = NS_RGB(0, 100, 0);
+		aColor = NS_RGB(0, 0, 0xff);
         return NS_OK;
 
 #if (MOZ_WIDGET_GTK == 2)
@@ -691,7 +691,10 @@ nsLookAndFeel::GetFloatImpl(FloatID aID, float &aResult)
         break;
     case eFloatID_SpellCheckerUnderlineRelativeSize:
         aResult = 1.0f;
-        break;
+		break;
+	case eFloatID_GrammarCheckerUnderlineRelativeSize:
+		aResult = 1.5f;
+		break;
     case eFloatID_CaretAspectRatio:
         aResult = sCaretRatio;
         break;

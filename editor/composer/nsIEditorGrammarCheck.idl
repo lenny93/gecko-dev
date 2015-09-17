@@ -7,16 +7,17 @@
 #include "nsIEditor.idl"
 
 interface nsIEditorGrammarCheckCallback;
-
+interface nsIArray;
 
 [scriptable, uuid(8ac26150-586f-4b70-90df-07610b80b45f)]
 interface nsIEditorGrammarCheck : nsISupports
 {
 	void registerAddon(in nsIEditorGrammarCheckCallback callback);
 	void errorsFound([array, size_is (count)] in uint32_t errorsStart, [array, size_is (count)] in uint32_t errorsEnd, in uint32_t count);
-	void addSuggestionForError(in uint32_t error, in AString suggestion);
-	AString getSuggestionForOffset(in nsIEditor editor, in uint32_t aOffset);
-	void doGrammarCorrection(in uint32_t aOffset);
+	void addSuggestionForError(in uint32_t error, in AString suggestion, in AString description);
+	nsIArray getSuggestionsForOffset(in nsIEditor editor, in uint32_t aOffset);
+	nsIArray getDescriptionsForOffset(in nsIEditor editor, in uint32_t aOffset);
+	void doGrammarCorrection(in uint32_t aOffset, in uint32_t index);
 	void toggleEnabled();
 	boolean isGrammarCheckEnabled();
 };

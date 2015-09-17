@@ -3815,7 +3815,7 @@ static StyleIDs SelectionStyleIDs[] = {
 	LookAndFeel::eColorID_LAST_COLOR,
 	LookAndFeel::eColorID_GrammarCheckerUnderline,
 	LookAndFeel::eIntID_SpellCheckerUnderlineStyle,
-	LookAndFeel::eFloatID_SpellCheckerUnderlineRelativeSize }
+	LookAndFeel::eFloatID_GrammarCheckerUnderlineRelativeSize }
 };
 
 void
