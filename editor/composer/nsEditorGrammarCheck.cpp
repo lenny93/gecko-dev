@@ -14,6 +14,8 @@
 #include "nsEditorGrammarCheck.h"
 #include "nsString.h"
 #include "nsIPlaintextEditor.h"
+#include "nsXPCOMCIDInternal.h"
+#include "nsIServiceManager.h"
 #include "../../modules/libpref/Preferences.h"
 
 using namespace mozilla;
@@ -60,6 +62,8 @@ NS_IMETHODIMP nsEditorGrammarCheck::ErrorsFound(uint32_t* errorsStart, uint32_t*
 		return NS_OK;
 
 	nsresult rv;
+
+	mErrors.clear();
 
 	nsCOMPtr<nsIDOMDocument> domDoc;
 	rv = mEditor->GetDocument(getter_AddRefs(domDoc));
@@ -408,9 +412,11 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 
 	mErrors.clear();
 
+	//if (!gCallback)
+	//	return NS_OK;
+
 	if (gCallback)
 		gCallback->DoGrammarCheck(os);
-
 
 	return NS_OK;
 }

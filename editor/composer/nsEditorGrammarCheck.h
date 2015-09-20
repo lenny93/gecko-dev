@@ -12,6 +12,7 @@
 #include "nsIArray.h"
 #include "nsIMutableArray.h"
 #include "nsISupportsPrimitives.h"
+#include "nsIRunnable.h"
 
 class nsIEditor;
 //class mozInlineSpellWordUtil;
@@ -104,10 +105,33 @@ public:
 private:
 	~nsEditorGrammarCheck();
 	static nsEditorGrammarCheck* gGrammarCheckService;
+
 	nsCOMPtr<nsIEditorGrammarCheckCallback> gCallback;
 
 	//mozInlineSpellWordUtil util;
 	std::vector<GRAMMARERROR> mErrors;
+};
+
+class GrammarCallbackTask : public nsRunnable
+{
+public:
+	GrammarCallbackTask(nsCOMPtr<nsIEditorGrammarCheckCallback> callback, nsString param)
+		: gCallback(callback), gParam(param)
+	{
+
+	}
+
+	NS_IMETHOD Run()
+	{
+		gCallback->DoGrammarCheck(gParam);
+		return NS_OK;
+	}
+
+private:
+
+
+	nsCOMPtr<nsIEditorGrammarCheckCallback> gCallback;
+	nsString gParam;
 };
 
 #endif

@@ -693,7 +693,7 @@ nsLookAndFeel::GetFloatImpl(FloatID aID, float &aResult)
         aResult = 1.0f;
 		break;
 	case eFloatID_GrammarCheckerUnderlineRelativeSize:
-		aResult = 1.5f;
+		aResult = 1.0f;
 		break;
     case eFloatID_CaretAspectRatio:
         aResult = sCaretRatio;
