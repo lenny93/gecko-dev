@@ -519,11 +519,13 @@ nsContextMenu.prototype = {
 	
 	if(gramSuggestions.length > 0)
 	{
-		this.showItem("grammar-suggestion-separator", true);
+		//this.showItem("grammar-suggestion-separator", true);
+		this.showItem("grammar-no-suggestions", false);
 	}
 	else
 	{
-		this.showItem("grammar-suggestion-separator", false);		
+		//this.showItem("grammar-suggestion-separator", false);
+		this.showItem("grammar-no-suggestions", true);		
 	}
   },
 

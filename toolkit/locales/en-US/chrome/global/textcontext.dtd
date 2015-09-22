@@ -23,6 +23,7 @@
 <!ENTITY spellCheckToggle.accesskey "s">
 <!ENTITY grammarCheckToggle.label "Check Grammar">
 <!ENTITY grammarCheckToggle.accesskey "g">
+<!ENTITY grammarNoSuggestion.label "(No Grammar Suggestions)">
 <!ENTITY spellNoSuggestions.label "(No Spelling Suggestions)">
 <!ENTITY spellDictionaries.label "Languages">
 <!ENTITY spellDictionaries.accesskey "l">

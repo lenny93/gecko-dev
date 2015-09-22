@@ -38,6 +38,9 @@
       </menugroup>
       <menuseparator id="context-sep-navigation"/>
       <menuseparator id="page-menu-separator"/>
+      <menuitem id="grammar-no-suggestions"
+                disabled="true"
+                label="&grammarNoSuggestion.label;"/>
       <menuseparator id="grammar-suggestion-separator"/>
       <menuitem id="spell-no-suggestions"
                 disabled="true"

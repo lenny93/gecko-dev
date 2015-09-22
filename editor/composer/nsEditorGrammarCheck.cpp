@@ -90,7 +90,6 @@ NS_IMETHODIMP nsEditorGrammarCheck::ErrorsFound(uint32_t* errorsStart, uint32_t*
 	rv = mEditor->GetSelectionController(getter_AddRefs(selcon));
 
 	nsCOMPtr<nsISelection> grammarCheckSelection;
-	//selcon->SetDisplaySelection(nsISelectionController::SELECTION_GRAMMARCHECK);
 	selcon->GetSelection(nsISelectionController::SELECTION_GRAMMARCHECK, getter_AddRefs(grammarCheckSelection));
 
 	if (!grammarCheckSelection)
@@ -411,9 +410,6 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 
 
 	//mErrors.clear();
-
-	//if (!gCallback)
-	//	return NS_OK;
 
 	if (gCallback)
 		gCallback->DoGrammarCheck(os);
