@@ -410,7 +410,7 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 		return NS_OK;
 
 
-	mErrors.clear();
+	//mErrors.clear();
 
 	//if (!gCallback)
 	//	return NS_OK;
