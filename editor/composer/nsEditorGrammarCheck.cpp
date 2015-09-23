@@ -14,8 +14,12 @@
 #include "nsEditorGrammarCheck.h"
 #include "nsString.h"
 #include "nsIPlaintextEditor.h"
+#include "nsITransferable.h"
 #include "nsXPCOMCIDInternal.h"
 #include "nsIServiceManager.h"
+#include "nsIDocumentEncoder.h"
+#include "nsIHTMLDocument.h"
+#include "nsContentCID.h"
 #include "../../modules/libpref/Preferences.h"
 
 using namespace mozilla;
@@ -403,16 +407,61 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 	nsresult rv;
 
 	nsString os;
-	mEditor->OutputToString(NS_LITERAL_STRING("text/plain"), 4, os);
+	uint32_t aFlags = nsIDocumentEncoder::SkipInvisibleContent;
 
-	if (NS_ConvertUTF16toUTF8(os).get() == "")
-		return NS_OK;
+	nsCOMPtr<nsIDOMDocument> domDoc;
+	rv = mEditor->GetDocument(getter_AddRefs(domDoc));
+	NS_ENSURE_SUCCESS(rv, rv);
+
+	nsCOMPtr<nsIDocumentEncoder> docEncoder;
+	docEncoder = do_CreateInstance(NS_HTMLCOPY_ENCODER_CONTRACTID);
+	NS_ENSURE_TRUE(docEncoder, NS_ERROR_FAILURE);
 
 
-	//mErrors.clear();
+	// Find the root node for the editor.
+	nsCOMPtr<nsIDOMElement> rootElem;
+	rv = mEditor->GetRootElement(getter_AddRefs(rootElem));
+	NS_ENSURE_SUCCESS(rv, rv);
+
+	nsCOMPtr<nsIDOMNode> rootNode = do_QueryInterface(rootElem);
+	NS_ASSERTION(mRootNode, "GetRootElement returned null *and* claimed to suceed!");
+
+	nsCOMPtr<nsINode> node = do_QueryInterface(rootNode);
+
+	// if it is a selection into input/textarea element or in a html content
+	// with pre-wrap style : text/plain. Otherwise text/html.
+	// see nsHTMLCopyEncoder::SetSelection
+	nsAutoString mimeType;
+	mimeType.AssignLiteral(kUnicodeMime);
+
+	// Do the first and potentially trial encoding as preformatted and raw.
+	uint32_t flags = aFlags | nsIDocumentEncoder::OutputPreformatted
+		| nsIDocumentEncoder::OutputRaw
+		| nsIDocumentEncoder::OutputForPlainTextClipboardCopy;
+
+
+	rv = docEncoder->Init(domDoc, mimeType, flags);
+	NS_ENSURE_SUCCESS(rv, rv);
+
+
+	rv = docEncoder->SetNativeContainerNode(node);
+	NS_ENSURE_SUCCESS(rv, rv);
+
+	// SetSelection set the mime type to text/plain if the selection is inside a
+	// text widget.
+	rv = docEncoder->GetMimeType(mimeType);
+	NS_ENSURE_SUCCESS(rv, rv);
+	bool selForcedTextPlain = mimeType.EqualsLiteral(kTextMime);
+
+	nsAutoString buf;
+	rv = docEncoder->EncodeToString(buf);
+	NS_ENSURE_SUCCESS(rv, rv);
+
+	rv = docEncoder->GetMimeType(mimeType);
+	NS_ENSURE_SUCCESS(rv, rv);
 
 	if (gCallback)
-		gCallback->DoGrammarCheck(os);
+		gCallback->DoGrammarCheck(buf);
 
 	return NS_OK;
 }
