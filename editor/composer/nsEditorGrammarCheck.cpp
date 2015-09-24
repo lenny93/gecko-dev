@@ -13,13 +13,13 @@
 #include "nsIClassInfoImpl.h"
 #include "nsEditorGrammarCheck.h"
 #include "nsString.h"
-#include "nsIPlaintextEditor.h"
 #include "nsITransferable.h"
 #include "nsXPCOMCIDInternal.h"
 #include "nsIServiceManager.h"
 #include "nsIDocumentEncoder.h"
 #include "nsIHTMLDocument.h"
 #include "nsContentCID.h"
+#include "nsGkAtoms.h"
 #include "../../modules/libpref/Preferences.h"
 
 using namespace mozilla;
@@ -337,7 +337,6 @@ void nsEditorGrammarCheck::SetCurrentEditor(nsIEditor* editor)
 		if (selcon)
 		{
 			nsCOMPtr<nsISelection> grammarCheckSelection;
-			//selcon->SetDisplaySelection(nsISelectionController::SELECTION_GRAMMARCHECK);
 			selcon->GetSelection(nsISelectionController::SELECTION_GRAMMARCHECK, getter_AddRefs(grammarCheckSelection));
 
 			if (grammarCheckSelection)
@@ -356,6 +355,7 @@ void nsEditorGrammarCheck::SetCurrentEditor(nsIEditor* editor)
 	DoGrammarCheck();
 
 }
+
 
 NS_IMETHODIMP nsEditorGrammarCheck::ToggleEnabled()
 {
@@ -405,8 +405,6 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 		return NS_OK;
 
 	nsresult rv;
-
-	nsString os;
 	uint32_t aFlags = nsIDocumentEncoder::SkipInvisibleContent;
 
 	nsCOMPtr<nsIDOMDocument> domDoc;
@@ -423,21 +421,30 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 	rv = mEditor->GetRootElement(getter_AddRefs(rootElem));
 	NS_ENSURE_SUCCESS(rv, rv);
 
-	nsCOMPtr<nsIDOMNode> rootNode = do_QueryInterface(rootElem);
-	NS_ASSERTION(mRootNode, "GetRootElement returned null *and* claimed to suceed!");
+	nsCOMPtr<nsIDOMNode> rootNode = do_QueryInterface(rootElem, &rv);
+	NS_ASSERTION(rootNode, "GetRootElement returned null *and* claimed to suceed!");
+
+	if (!rootNode)
+		return NS_OK;
 
 	nsCOMPtr<nsINode> node = do_QueryInterface(rootNode);
+	if (nsContentUtils::IsSystemPrincipal(node->NodePrincipal()))
+	{
+		mEditor = nullptr;
+		return NS_OK;
+	}
 
 	// if it is a selection into input/textarea element or in a html content
 	// with pre-wrap style : text/plain. Otherwise text/html.
 	// see nsHTMLCopyEncoder::SetSelection
 	nsAutoString mimeType;
-	mimeType.AssignLiteral(kUnicodeMime);
+	mimeType.AssignLiteral(kTextMime);
 
 	// Do the first and potentially trial encoding as preformatted and raw.
 	uint32_t flags = aFlags | nsIDocumentEncoder::OutputPreformatted
 		| nsIDocumentEncoder::OutputRaw
-		| nsIDocumentEncoder::OutputForPlainTextClipboardCopy;
+		| nsIDocumentEncoder::OutputForPlainTextClipboardCopy
+		| nsIDocumentEncoder::OutputDropInvisibleBreak;
 
 
 	rv = docEncoder->Init(domDoc, mimeType, flags);
@@ -446,12 +453,10 @@ NS_IMETHODIMP nsEditorGrammarCheck::DoGrammarCheck()
 
 	rv = docEncoder->SetNativeContainerNode(node);
 	NS_ENSURE_SUCCESS(rv, rv);
-
 	// SetSelection set the mime type to text/plain if the selection is inside a
 	// text widget.
 	rv = docEncoder->GetMimeType(mimeType);
 	NS_ENSURE_SUCCESS(rv, rv);
-	bool selForcedTextPlain = mimeType.EqualsLiteral(kTextMime);
 
 	nsAutoString buf;
 	rv = docEncoder->EncodeToString(buf);

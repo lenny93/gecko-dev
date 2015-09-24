@@ -104,6 +104,7 @@ public:
 	
 private:
 	~nsEditorGrammarCheck();
+
 	static nsEditorGrammarCheck* gGrammarCheckService;
 
 	nsCOMPtr<nsIEditorGrammarCheckCallback> gCallback;

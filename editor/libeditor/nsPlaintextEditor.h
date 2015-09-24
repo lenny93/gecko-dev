@@ -229,6 +229,7 @@ protected:
 friend class nsHTMLEditRules;
 friend class nsTextEditRules;
 friend class nsAutoEditInitRulesTrigger;
+friend class nsEditorGrammarCheck;
 };
 
 #endif //nsPlaintextEditor_h__
