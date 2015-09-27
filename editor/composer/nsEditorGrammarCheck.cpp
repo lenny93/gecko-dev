@@ -83,8 +83,7 @@ NS_IMETHODIMP nsEditorGrammarCheck::ErrorsFound(uint32_t* errorsStart, uint32_t*
 	rv = mEditor->GetRootElement(getter_AddRefs(rootElem));
 	NS_ENSURE_SUCCESS(rv, rv);
 
-	nsCOMPtr<nsIDOMNode> rootNode = do_QueryInterface(rootElem);
-	mRootNode = rootNode;
+	mRootNode = do_QueryInterface(rootElem);
 	NS_ASSERTION(mRootNode, "GetRootElement returned null *and* claimed to suceed!");
 
 	if (!mRootNode)
@@ -162,7 +161,7 @@ NS_IMETHODIMP nsEditorGrammarCheck::ErrorsFound(uint32_t* errorsStart, uint32_t*
     return NS_OK;
 }
 
-NS_IMETHODIMP nsEditorGrammarCheck::AddSuggestionForError(uint32_t error, const nsAString& suggestion, const nsAString& description)
+NS_IMETHODIMP nsEditorGrammarCheck::AddSuggestionForError(uint32_t error, const nsAString& suggestion, const nsAString& description, bool messageOnly)
 {
 	if (mErrors.size() <= (int)error)
 		return NS_OK;
@@ -171,7 +170,28 @@ NS_IMETHODIMP nsEditorGrammarCheck::AddSuggestionForError(uint32_t error, const 
 
 	mErrors[error].suggestions.push_back(nsString(suggestion));
 	mErrors[error].descriptions.push_back(nsString(description));
+	mErrors[error].messageOnly.push_back(messageOnly);
 	
+	return NS_OK;
+}
+
+NS_IMETHODIMP nsEditorGrammarCheck::IsSuggestionMessageOnly(uint32_t aOffset, uint32_t suggestion, bool* _retval)
+{
+	nsresult rv;
+
+	for (int i = 0; i < mErrors.size(); ++i)
+	{
+		if (mErrors[i].errorStart <= aOffset && mErrors[i].errorEnd > aOffset)
+		{
+			if (mErrors[i].suggestions.size() > (int)suggestion)
+			{
+				*_retval = mErrors[i].messageOnly[suggestion];
+			}
+			break;
+		}
+	}
+	
+
 	return NS_OK;
 }
 
@@ -375,7 +395,6 @@ NS_IMETHODIMP nsEditorGrammarCheck::ToggleEnabled()
 		if (selcon)
 		{
 			nsCOMPtr<nsISelection> grammarCheckSelection;
-			//selcon->SetDisplaySelection(nsISelectionController::SELECTION_GRAMMARCHECK);
 			selcon->GetSelection(nsISelectionController::SELECTION_GRAMMARCHECK, getter_AddRefs(grammarCheckSelection));
 
 			if (grammarCheckSelection)

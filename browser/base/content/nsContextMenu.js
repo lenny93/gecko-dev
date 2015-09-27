@@ -504,29 +504,26 @@ nsContextMenu.prototype = {
 	{
 		var gs = gramSuggestions.queryElementAt(index, Components.interfaces.nsISupportsString);
 		var gd = gramDescriptions.queryElementAt(index, Components.interfaces.nsISupportsString);
+		var messageOnly = gcSvc.isSuggestionMessageOnly(rangeOffset, index);
 		
-		if(gs.data == "")
-		{			
-			itemNoSuggestion.setAttribute("tooltip", gd.data);
-			itemNoSuggestion.setAttribute("tooltiptext", gd.data);
-			this.showItem("grammar-no-suggestions", true);
+		var item = menu.ownerDocument.createElement("menuitem");
+		item.setAttribute("label", gs.data);
+		item.setAttribute("value", gs.data);
+		item.setAttribute("tooltip", gd.data);
+		item.setAttribute("tooltiptext", gd.data);
+		item.setAttribute("class", "spell-suggestion");
+		
+		if(messageOnly)
+		{
+			item.setAttribute("disabled", true);
 		}
 		else
-		{
-			var item = menu.ownerDocument.createElement("menuitem");
-			item.setAttribute("label", gs.data);
-			item.setAttribute("value", gs.data);
-			item.setAttribute("tooltip", gd.data);
-			item.setAttribute("tooltiptext", gd.data);
-			item.setAttribute("class", "spell-suggestion");
-			
+		{			
 			var callback = function(me, val) { return function(evt) { me.doGrammarCorrection(val); } };
-			item.addEventListener("command", callback(this, index), true);
-			
-			menu.insertBefore(item, separator);
-			mGrammarSuggestions.push(item);
-			this.showItem("grammar-no-suggestions", false);	
+			item.addEventListener("command", callback(this, index), true);			
 		}
+		menu.insertBefore(item, separator);
+		mGrammarSuggestions.push(item);
 		
 	}
 	
@@ -537,7 +534,6 @@ nsContextMenu.prototype = {
 	else
 	{
 		this.showItem("grammar-suggestion-separator", false);	
-		this.showItem("grammar-no-suggestions", false);	
 	}
   },
 

@@ -7312,12 +7312,6 @@ HTMLInputElement::OnValueChanged(bool aNotify)
   
   if (nsEditorGrammarCheck::GetGrammarCheckService()->mEditor == this->GetEditor())
   {
-	  if (nsContentUtils::IsSystemPrincipal(this->NodePrincipal()))
-	  {
-		  nsEditorGrammarCheck::GetGrammarCheckService()->mEditor = nullptr;
-		  return;
-	  }
-
 	  nsEditorGrammarCheck::GetGrammarCheckService()->DoGrammarCheck();
   }
 }

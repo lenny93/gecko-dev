@@ -54,6 +54,7 @@ public:
 		int errorEnd;
 		std::vector<nsString> suggestions;
 		std::vector<nsString> descriptions;
+		std::vector<bool> messageOnly;
 	};
 	
 	static already_AddRefed<nsEditorGrammarCheck> GetSingleton();
