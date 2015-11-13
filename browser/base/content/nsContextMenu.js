@@ -14,7 +14,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "Pocket",
   "resource:///modules/Pocket.jsm");
 
 var gContextMenuContentData = null;
-var gcSvc = Components.classes["@mozilla.org/grammarcheck;1"].getService(Components.interfaces.nsIEditorGrammarCheck);
+var gcSvc = Components.classes["@mozilla.org/grammarcheck;1"].
+  getService(Components.interfaces.nsIEditorGrammarCheck);
 var rangeOffset;
 var mGrammarSuggestions = [];
 
@@ -437,8 +438,8 @@ nsContextMenu.prototype = {
     this.showItem("spell-separator", canSpell || this.onEditableArea);
     document.getElementById("spell-check-enabled")
             .setAttribute("checked", canSpell && InlineSpellCheckerUI.enabled);
-	document.getElementById("grammar-check-enabled").setAttribute("checked", gcSvc.isGrammarCheckEnabled());
-			
+    document.getElementById("grammar-check-enabled")
+            .setAttribute("checked", gcSvc.isGrammarCheckEnabled());
 
     this.showItem("spell-add-to-dictionary", onMisspelling);
     this.showItem("spell-undo-add-to-dictionary", showUndo);
@@ -476,65 +477,55 @@ nsContextMenu.prototype = {
   },
   
   grammarCheckToggle: function() {
-	gcSvc.toggleEnabled();
+    gcSvc.toggleEnabled();
   },
   
-  doGrammarCorrection: function(index)
-  {
-	gcSvc.doGrammarCorrection(this.mWordOffset, index);
+  doGrammarCorrection: function(index) {
+    gcSvc.doGrammarCorrection(this.mWordOffset, index);
   },
   
-  initGrammarItems: function(aEditor, rangeParent, rangeOffset) {	
-	var gramSuggestions = gcSvc.getSuggestionsForOffset(aEditor, rangeOffset);
-	var gramDescriptions = gcSvc.getDescriptionsForOffset(aEditor, rangeOffset);
-	this.mWordOffset = rangeOffset;
-	var separator = document.getElementById("grammar-suggestion-separator");
-	var itemNoSuggestion = document.getElementById("grammar-no-suggestions");
-	var menu = separator.parentNode;
-	
-	var index;
-	for(index = 0; index < mGrammarSuggestions.length; index++)
-	{
-		menu.removeChild(mGrammarSuggestions[index]);
-	}
-	
-	mGrammarSuggestions = [];
-	
-	for(index = 0; index < gramSuggestions.length; index++)
-	{
-		var gs = gramSuggestions.queryElementAt(index, Components.interfaces.nsISupportsString);
-		var gd = gramDescriptions.queryElementAt(index, Components.interfaces.nsISupportsString);
-		var messageOnly = gcSvc.isSuggestionMessageOnly(rangeOffset, index);
-		
-		var item = menu.ownerDocument.createElement("menuitem");
-		item.setAttribute("label", gs.data);
-		item.setAttribute("value", gs.data);
-		item.setAttribute("tooltip", gd.data);
-		item.setAttribute("tooltiptext", gd.data);
-		item.setAttribute("class", "spell-suggestion");
-		
-		if(messageOnly)
-		{
-			item.setAttribute("disabled", true);
-		}
-		else
-		{			
-			var callback = function(me, val) { return function(evt) { me.doGrammarCorrection(val); } };
-			item.addEventListener("command", callback(this, index), true);			
-		}
-		menu.insertBefore(item, separator);
-		mGrammarSuggestions.push(item);
-		
-	}
-	
-	if(gramSuggestions.length > 0)
-	{
-		this.showItem("grammar-suggestion-separator", true);
-	}
-	else
-	{
-		this.showItem("grammar-suggestion-separator", false);	
-	}
+  initGrammarItems: function(aEditor, rangeParent, rangeOffset) {
+    var gramSuggestions = gcSvc.getSuggestionsForOffset(aEditor, rangeOffset);
+    var gramDescriptions = gcSvc.getDescriptionsForOffset(aEditor, rangeOffset);
+    this.mWordOffset = rangeOffset;
+    var separator = document.getElementById("grammar-suggestion-separator");
+    var itemNoSuggestion = document.getElementById("grammar-no-suggestions");
+    var menu = separator.parentNode;
+    
+    var index;
+    for(index = 0; index < mGrammarSuggestions.length; index++) {
+      menu.removeChild(mGrammarSuggestions[index]);
+    }
+    
+    mGrammarSuggestions = [];
+    
+    for(index = 0; index < gramSuggestions.length; index++) {
+      var gs = gramSuggestions.queryElementAt(index, Components.interfaces.nsISupportsString);
+      var gd = gramDescriptions.queryElementAt(index, Components.interfaces.nsISupportsString);
+      var messageOnly = gcSvc.isSuggestionMessageOnly(rangeOffset, index);
+      
+      var item = menu.ownerDocument.createElement("menuitem");
+      item.setAttribute("label", gs.data);
+      item.setAttribute("value", gs.data);
+      item.setAttribute("tooltip", gd.data);
+      item.setAttribute("tooltiptext", gd.data);
+      item.setAttribute("class", "spell-suggestion");
+      
+      if(messageOnly) {
+        item.setAttribute("disabled", true);
+      } else {
+        var callback = function(me, val) { return function(evt) { me.doGrammarCorrection(val); } };
+        item.addEventListener("command", callback(this, index), true);
+      }
+      menu.insertBefore(item, separator);
+      mGrammarSuggestions.push(item);
+    }
+    
+    if(gramSuggestions.length > 0) {
+      this.showItem("grammar-suggestion-separator", true);
+    } else {
+      this.showItem("grammar-suggestion-separator", false); 
+    }
   },
 
   initClipboardItems: function() {
@@ -800,7 +791,8 @@ nsContextMenu.prototype = {
           else {
             InlineSpellCheckerUI.init(this.target.QueryInterface(Ci.nsIDOMNSEditableElement).editor);
             InlineSpellCheckerUI.initFromEvent(aRangeParent, aRangeOffset);
-			this.initGrammarItems(this.target.QueryInterface(Ci.nsIDOMNSEditableElement).editor, aRangeParent, aRangeOffset);
+            this.initGrammarItems(this.target.QueryInterface(Ci.nsIDOMNSEditableElement).editor,
+                                  aRangeParent, aRangeOffset);
           }
         }
         this.onKeywordField = (editFlags & SpellCheckHelper.KEYWORD);
@@ -933,7 +925,8 @@ nsContextMenu.prototype = {
                                         .getInterface(Ci.nsIEditingSession);
           InlineSpellCheckerUI.init(editingSession.getEditorForWindow(targetWin));
           InlineSpellCheckerUI.initFromEvent(aRangeParent, aRangeOffset);
-		  this.initGrammarItems(editingSession.getEditorForWindow(targetWin), aRangeParent, aRangeOffset);
+          this.initGrammarItems(editingSession.getEditorForWindow(targetWin),
+                                aRangeParent, aRangeOffset);
         }
         var canSpell = InlineSpellCheckerUI.canSpellCheck && this.canSpellCheck;
         this.showItem("spell-check-enabled", canSpell);

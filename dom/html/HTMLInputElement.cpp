@@ -7310,9 +7310,8 @@ HTMLInputElement::OnValueChanged(bool aNotify)
     SetDirectionIfAuto(true, aNotify);
   }
   
-  if (nsEditorGrammarCheck::GetGrammarCheckService()->mEditor == this->GetEditor())
-  {
-	  nsEditorGrammarCheck::GetGrammarCheckService()->DoGrammarCheck();
+  if (nsEditorGrammarCheck::GetGrammarCheckService()->mEditor == this->GetEditor()) {
+    nsEditorGrammarCheck::GetGrammarCheckService()->DoGrammarCheck();
   }
 }
 

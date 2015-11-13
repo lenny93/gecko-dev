@@ -269,7 +269,7 @@ GetIndexFromSelectionType(SelectionType aType)
     case nsISelectionController::SELECTION_ACCESSIBILITY: return 6; break;
     case nsISelectionController::SELECTION_FIND: return 7; break;
     case nsISelectionController::SELECTION_URLSECONDARY: return 8; break;
-	case nsISelectionController::SELECTION_GRAMMARCHECK: return 9; break;
+    case nsISelectionController::SELECTION_GRAMMARCHECK: return 9; break;
     default:
       return -1; break;
     }
@@ -291,7 +291,7 @@ GetSelectionTypeFromIndex(int8_t aIndex)
     case 6: return nsISelectionController::SELECTION_ACCESSIBILITY; break;
     case 7: return nsISelectionController::SELECTION_FIND; break;
     case 8: return nsISelectionController::SELECTION_URLSECONDARY; break;
-	case 9: return nsISelectionController::SELECTION_GRAMMARCHECK; break;
+    case 9: return nsISelectionController::SELECTION_GRAMMARCHECK; break;
     default:
       return nsISelectionController::SELECTION_NORMAL; break;
   }
@@ -4741,7 +4741,8 @@ Selection::RemoveRange(nsRange& aRange, ErrorResult& aRv)
     // into view. The spell-check selection, however, is created and destroyed
     // in the background. We don't want to scroll in this case or the view
     // might appear to be moving randomly (bug 337871).
-    if ((mType != nsISelectionController::SELECTION_SPELLCHECK && cnt > 0) || (mType != nsISelectionController::SELECTION_GRAMMARCHECK && cnt > 0))
+    if ((mType != nsISelectionController::SELECTION_SPELLCHECK && cnt > 0) ||
+        (mType != nsISelectionController::SELECTION_GRAMMARCHECK && cnt > 0))
       ScrollIntoView(nsISelectionController::SELECTION_FOCUS_REGION);
   }
 

@@ -334,7 +334,7 @@ public:
     eIndexConvText,
     eIndexSelConvText,
     eIndexSpellChecker,
-	eIndexGrammarChecker
+    eIndexGrammarChecker
   };
 
   static int32_t GetUnderlineStyleIndexForSelectionType(int32_t aSelectionType)
@@ -350,8 +350,8 @@ public:
         return eIndexSelConvText;
       case nsISelectionController::SELECTION_SPELLCHECK:
         return eIndexSpellChecker;
-	  case nsISelectionController::SELECTION_GRAMMARCHECK:
-		  return eIndexGrammarChecker;
+      case nsISelectionController::SELECTION_GRAMMARCHECK:
+        return eIndexGrammarChecker;
       default:
         NS_WARNING("non-IME selection type");
         return eIndexRawInput;
@@ -3811,11 +3811,11 @@ static StyleIDs SelectionStyleIDs[] = {
     LookAndFeel::eColorID_SpellCheckerUnderline,
     LookAndFeel::eIntID_SpellCheckerUnderlineStyle,
     LookAndFeel::eFloatID_SpellCheckerUnderlineRelativeSize },
-	{ LookAndFeel::eColorID_LAST_COLOR,
-	LookAndFeel::eColorID_LAST_COLOR,
-	LookAndFeel::eColorID_GrammarCheckerUnderline,
-	LookAndFeel::eIntID_SpellCheckerUnderlineStyle,
-	LookAndFeel::eFloatID_GrammarCheckerUnderlineRelativeSize }
+  { LookAndFeel::eColorID_LAST_COLOR,
+    LookAndFeel::eColorID_LAST_COLOR,
+    LookAndFeel::eColorID_GrammarCheckerUnderline,
+    LookAndFeel::eIntID_SpellCheckerUnderlineStyle,
+    LookAndFeel::eFloatID_GrammarCheckerUnderlineRelativeSize }
 };
 
 void
@@ -5195,7 +5195,7 @@ ComputeSelectionUnderlineHeight(nsPresContext* aPresContext,
     case nsISelectionController::SELECTION_IME_CONVERTEDTEXT:
     case nsISelectionController::SELECTION_IME_SELECTEDCONVERTEDTEXT:
       return aFontMetrics.underlineSize;
-	case nsISelectionController::SELECTION_GRAMMARCHECK:
+    case nsISelectionController::SELECTION_GRAMMARCHECK:
     case nsISelectionController::SELECTION_SPELLCHECK: {
       // The thickness of the spellchecker underline shouldn't honor the font
       // metrics.  It should be constant pixels value which is decided from the
@@ -5337,7 +5337,7 @@ static void DrawSelectionDecorations(gfxContext* aContext,
       }
       break;
     }
-	case nsISelectionController::SELECTION_GRAMMARCHECK:
+    case nsISelectionController::SELECTION_GRAMMARCHECK:
     case nsISelectionController::SELECTION_SPELLCHECK:
       if (!weDefineSelectionUnderline)
         return;
@@ -6609,7 +6609,7 @@ nsTextFrame::CombineSelectionUnderlineRect(nsPresContext* aPresContext,
     int32_t index =
       nsTextPaintStyle::GetUnderlineStyleIndexForSelectionType(sd->mType);
     if (sd->mType == nsISelectionController::SELECTION_SPELLCHECK ||
-		sd->mType == nsISelectionController::SELECTION_GRAMMARCHECK) {
+        sd->mType == nsISelectionController::SELECTION_GRAMMARCHECK) {
       if (!nsTextPaintStyle::GetSelectionUnderline(aPresContext, index, nullptr,
                                                    &relativeSize, &style)) {
         continue;

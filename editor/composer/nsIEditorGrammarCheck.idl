@@ -9,22 +9,22 @@
 interface nsIEditorGrammarCheckCallback;
 interface nsIArray;
 
-[scriptable, uuid(8ac26150-586f-4b70-90df-07610b80b45f)]
+[scriptable, builtinclass, uuid(8ac26150-586f-4b70-90df-07610b80b45f)]
 interface nsIEditorGrammarCheck : nsISupports
 {
-	void registerAddon(in nsIEditorGrammarCheckCallback callback);
-	void errorsFound([array, size_is (count)] in uint32_t errorsStart, [array, size_is (count)] in uint32_t errorsEnd, in uint32_t count);
-	void addSuggestionForError(in uint32_t error, in AString suggestion, in AString description, [optional] in boolean messageOnly);
-	nsIArray getSuggestionsForOffset(in nsIEditor editor, in uint32_t aOffset);
-	nsIArray getDescriptionsForOffset(in nsIEditor editor, in uint32_t aOffset);
-	void doGrammarCorrection(in uint32_t aOffset, in uint32_t index);
-	void toggleEnabled();
-	boolean isGrammarCheckEnabled();
-	boolean isSuggestionMessageOnly(in uint32_t aOffset, in uint32_t suggestion);
+  void registerAddon(in nsIEditorGrammarCheckCallback callback);
+  void errorsFound([array, size_is (aCount)] in uint32_t aErrorsStart, [array, size_is (aCount)] in uint32_t aErrorsEnd, in uint32_t aCount);
+  void addSuggestionForError(in uint32_t aError, in AString aSuggestion, in AString aDescription, [optional] in boolean aMessageOnly);
+  nsIArray getSuggestionsForOffset(in nsIEditor aEditor, in uint32_t aOffset);
+  nsIArray getDescriptionsForOffset(in nsIEditor aEditor, in uint32_t aOffset);
+  void doGrammarCorrection(in uint32_t aOffset, in uint32_t aIndex);
+  void toggleEnabled();
+  boolean isGrammarCheckEnabled();
+  boolean isSuggestionMessageOnly(in uint32_t aOffset, in uint32_t aSuggestion);
 };
 
 [scriptable, function, uuid(a234f68f-425c-4f48-ba8b-abf49621e24a)]
 interface nsIEditorGrammarCheckCallback : nsISupports
 {
-	void doGrammarCheck(in AString text);
+  void doGrammarCheck(in AString text);
 };

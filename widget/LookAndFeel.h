@@ -59,7 +59,7 @@ public:
     eColorID_IMESelectedConvertedTextUnderline,
 
     eColorID_SpellCheckerUnderline,
-	eColorID_GrammarCheckerUnderline,
+    eColorID_GrammarCheckerUnderline,
 
     // New CSS 2 color definitions
     eColorID_activeborder,
@@ -465,8 +465,8 @@ public:
 
     // The width/height ratio of the cursor. If used, the CaretWidth int metric
     // should be added to the calculated caret width.
-	eFloatID_CaretAspectRatio,
-	eFloatID_GrammarCheckerUnderlineRelativeSize
+    eFloatID_CaretAspectRatio,
+    eFloatID_GrammarCheckerUnderlineRelativeSize
   };
 
   // These constants must be kept in 1:1 correspondence with the
